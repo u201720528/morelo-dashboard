@@ -7,7 +7,8 @@ from werkzeug.utils import secure_filename
 import os
 import io
 import pandas as pd
-import matplotlib as plt
+import matplotlib.pyplot as plt
+
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 import base64
@@ -16,7 +17,6 @@ import requests
 import numpy as np
 
 app = Flask(__name__)
-
 url = 'https://lds-api.azurewebsites.net/home/logisticRegression'
 
 
@@ -57,7 +57,7 @@ def modelo():
     cnf_matrix = confusion_matrix(Y_test, predictions, labels=[1, 0])
     plt.figure()
     plot_url1 = plot_confusion_matrix(cnf_matrix, classes=['churn=1', 'churn=0'], normalize=False, title='Matriz de confusión')
-    return render_template('grafica.html', imagen={'imagen1': plot_url1})
+    return render_template('prediccion.html', imagen={'imagen1': plot_url1})
 
 def plot_confusion_matrix(cm, classes,
                           normalize=False,
@@ -93,7 +93,7 @@ def plot_confusion_matrix(cm, classes,
     plt.ylabel('Etiqueta Real')
     plt.xlabel('Etiqueta Predicha')
     img = io.BytesIO()
-    plt.pyplot.savefig(img, format='png')
+    pyplot.savefig(img, format='png')
     img.seek(0)
     plot_url = base64.b64encode(img.getvalue()).decode()
     return plot_url
@@ -138,14 +138,14 @@ def grafica1(df):
     ax.barh(df['distrito'].unique().tolist(), df["distrito"].value_counts(), align='center')
     ax.grid(b = True, color ='grey',linestyle ='-.', linewidth = 0.5, alpha = 0.2)
     for i in ax.patches:
-        plt.pyplot.text(i.get_width()+0.2, i.get_y()+0.25, str(round((i.get_width()), 2)),fontsize = 10, fontweight ='bold',color ='grey')
+        pyplot.text(i.get_width()+0.2, i.get_y()+0.25, str(round((i.get_width()), 2)),fontsize = 10, fontweight ='bold',color ='grey')
         # establece las etiquetas x/y y muestra el título 
-    plt.pyplot.xlabel("Distrito")
-    plt.pyplot.ylabel("Cantidad")
-    plt.pyplot.title("Hurto por Distrito")
+    pyplot.xlabel("Distrito")
+    pyplot.ylabel("Cantidad")
+    pyplot.title("Hurto por Distrito")
         
     img = io.BytesIO()
-    plt.pyplot.savefig(img, format='png')
+    pyplot.savefig(img, format='png')
     img.seek(0)
     plot_url = base64.b64encode(img.getvalue()).decode()  
     return  plot_url
@@ -155,14 +155,14 @@ def grafica2(df):
     ax.barh(df['sucursal'].unique().tolist(), df["sucursal"].value_counts(), align='center')
     ax.grid(b = True, color ='grey',linestyle ='-.', linewidth = 0.5, alpha = 0.2)
     for i in ax.patches:
-        plt.pyplot.text(i.get_width()+0.2, i.get_y()+0.25, str(round((i.get_width()), 2)),fontsize = 10, fontweight ='bold',color ='grey')
+        pyplot.text(i.get_width()+0.2, i.get_y()+0.25, str(round((i.get_width()), 2)),fontsize = 10, fontweight ='bold',color ='grey')
     # establece las etiquetas x/y y muestra el título 
-    plt.pyplot.xlabel("Sucursal")
-    plt.pyplot.ylabel("Cantidad")
-    plt.pyplot.title("Hurto por Sucursal")
+    pyplot.xlabel("Sucursal")
+    pyplot.ylabel("Cantidad")
+    pyplot.title("Hurto por Sucursal")
     
     img = io.BytesIO()
-    plt.pyplot.savefig(img, format='png')
+    pyplot.savefig(img, format='png')
     img.seek(0)
     plot_url = base64.b64encode(img.getvalue()).decode()  
     return  plot_url
@@ -172,14 +172,14 @@ def grafica3(df):
     ax.barh(df['tarifa'].unique().tolist(), df["tarifa"].value_counts(), align='center')
     ax.grid(b = True, color ='grey',linestyle ='-.', linewidth = 0.5, alpha = 0.2)
     for i in ax.patches:
-        plt.pyplot.text(i.get_width()+0.2, i.get_y()+0.25, str(round((i.get_width()), 2)),fontsize = 10, fontweight ='bold',color ='grey')
+        pyplot.text(i.get_width()+0.2, i.get_y()+0.25, str(round((i.get_width()), 2)),fontsize = 10, fontweight ='bold',color ='grey')
     # establece las etiquetas x/y y muestra el título 
-    plt.pyplot.xlabel("Distrito")
-    plt.pyplot.ylabel("Cantidad")
-    plt.pyplot.title("Hurto por Tarifa")
+    pyplot.xlabel("Distrito")
+    pyplot.ylabel("Cantidad")
+    pyplot.title("Hurto por Tarifa")
     
     img = io.BytesIO()
-    plt.pyplot.savefig(img, format='png')
+    pyplot.savefig(img, format='png')
     img.seek(0)
     plot_url = base64.b64encode(img.getvalue()).decode()  
     return  plot_url
