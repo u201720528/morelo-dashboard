@@ -6,22 +6,17 @@
                 <a class="nav-link" href="/">Inicio</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link " href="#">Grafica</a>
+                <a class="nav-link " href="./grafica">Gráfica Hurtos</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link active" href="#">Prediccion</a>
+                <a class="nav-link active" href="./modelo">Modelo</a>
             </li>
         </ul>
     </div>
     <div class="card-body">
-        <table class="default">
-            {% for idx, val in predicciones %}
-            <tr>
-                <td>Caso {{ idx }} </td>
-                <td>prediccion = {{ val }}</td>
-            </tr>
-            {% endfor %}
-        </table>
+        <center>
+            <img width="1000" height="1300" src="data:image/png;base64,{{imagen.imagen1}}">
+        </center>
     </div>
 </div>
 

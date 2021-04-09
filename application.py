@@ -1,4 +1,8 @@
+import itertools
+
 from flask import Flask, request, render_template
+from sklearn import preprocessing, model_selection, linear_model
+from sklearn.metrics import precision_score, recall_score, confusion_matrix
 from werkzeug.utils import secure_filename
 import os
 import io
@@ -9,6 +13,7 @@ from matplotlib.figure import Figure
 import base64
 from matplotlib import pyplot
 import requests
+import numpy as np
 
 app = Flask(__name__)
 
@@ -18,6 +23,80 @@ url = 'https://lds-api.azurewebsites.net/home/logisticRegression'
 @app.route('/')
 def main():
     return render_template('home.html')
+
+@app.route('/modelo', methods=['GET'])
+def modelo():
+    ModelData = pd.read_csv("MainData.csv")
+    print(ModelData.head())
+    ModelData['clasificacion'] = ModelData['clasificacion'].astype('int')
+
+    X = np.array(ModelData.drop(['clasificacion'], 1))
+    y = np.array(ModelData['clasificacion'])
+    f = X.shape
+    # print(f)
+
+    X = preprocessing.StandardScaler().fit(X).transform(X)
+
+    validation_size = 0.2
+    seed = 4
+
+    X_train, X_test, Y_train, Y_test = model_selection.train_test_split(X, y, test_size=validation_size,
+                                                                        random_state=seed)
+
+    print('Train set:', X_train.shape, Y_train.shape)
+    print('Test set:', X_test.shape, Y_test.shape)
+
+    # C=1.0
+    model = linear_model.LogisticRegression(C=1, class_weight=None, dual=False, fit_intercept=True,
+                                            intercept_scaling=1, max_iter=100, multi_class='ovr', n_jobs=1,
+                                            penalty='l2', random_state=None, solver='liblinear', tol=0.0001,
+                                            verbose=0, warm_start=False)
+    model.fit(X_train, Y_train)
+
+    predictions = model.predict(X_test)
+    cnf_matrix = confusion_matrix(Y_test, predictions, labels=[1, 0])
+    plt.figure()
+    plot_url1 = plot_confusion_matrix(cnf_matrix, classes=['churn=1', 'churn=0'], normalize=False, title='Matriz de confusión')
+    return render_template('grafica.html', imagen={'imagen1': plot_url1})
+
+def plot_confusion_matrix(cm, classes,
+                          normalize=False,
+                          title='Confusion matrix',
+                          cmap=plt.cm.Blues):
+    """
+    Esta función muestra y dibuja la matriz de confusión.
+    La normalización se puede aplicar estableciendo el valor `normalize=True`.
+    """
+    if normalize:
+        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+        print("Matriz de confusión normalizada")
+    else:
+        print('Matriz de confusión sin normalización')
+
+    print(cm)
+
+    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.title(title)
+    plt.colorbar()
+    tick_marks = np.arange(len(classes))
+    plt.xticks(tick_marks, classes, rotation=45)
+    plt.yticks(tick_marks, classes)
+
+    fmt = '.2f' if normalize else 'd'
+    thresh = cm.max() / 2.
+    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        plt.text(j, i, format(cm[i, j], fmt),
+                 horizontalalignment="center",
+                 color="white" if cm[i, j] > thresh else "black")
+
+    plt.tight_layout()
+    plt.ylabel('Etiqueta Real')
+    plt.xlabel('Etiqueta Predicha')
+    img = io.BytesIO()
+    plt.pyplot.savefig(img, format='png')
+    img.seek(0)
+    plot_url = base64.b64encode(img.getvalue()).decode()
+    return plot_url
 
 
 @app.route('/grafica', methods=['GET'])
