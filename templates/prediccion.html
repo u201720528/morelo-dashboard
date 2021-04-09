@@ -1,0 +1,29 @@
+{% extends "layout.html" %} {% block content %}
+<div class="card text-center">
+    <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item">
+                <a class="nav-link" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link " href="#">Grafica</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="#">Prediccion</a>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body">
+        <table class="default">
+            {% for idx, val in predicciones %}
+            <tr>
+                <td>Caso {{ idx }} </td>
+                <td>prediccion = {{ val }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+
+{% endblock %}

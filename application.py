@@ -1,0 +1,124 @@
+from flask import Flask, request, render_template
+from werkzeug.utils import secure_filename
+import os
+import io
+import pandas as pd
+import matplotlib as plt
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
+import base64
+from matplotlib import pyplot
+import requests
+
+app = Flask(__name__)
+
+url = 'https://lds-api.azurewebsites.net/home/logisticRegression'
+
+
+@app.route('/')
+def main():
+    return render_template('home.html')
+
+
+@app.route('/grafica', methods=['GET'])
+def grafica():
+    #if request.method == 'POST':
+    #da = request.files['file']
+    #filename = secure_filename(da.filename)
+    df = pd.read_csv("hurtos.csv")
+    headers = ["numero_cliente", "fecha_inspeccion", "comuna", "distrito", "actividad", "actividad_descripcion",
+               "categoria", "giro_suministro", "tarifa", "clave_tarifa", "latitud", "longitud", "tipo_causal",
+               "inf_disponible", "sucursal", "fecha_inicio", "fecha_fin", "fecha_creacion", "meses", "f1", "f2", "f3",
+               "f4", "f5", "f6", "f7", "f8", "f9", "f10", "f11", "f12", "f13", "f14", "f15", "f16", "f17", "f18", "f19",
+               "f20", "f21", "f22", "f23", "f24"
+        , "d1", "d2", "d3", "d4", "d5", "d6", "d7", "d8", "d9", "d10", "d11", "d12", "d13", "d14", "d15", "d16", "d17",
+               "d18", "d19", "d20", "d21", "d22", "d23", "d24"
+        , "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "c11", "c12", "c13", "c14", "c15", "c16", "c17",
+               "c18", "c19", "c20", "c21", "c22", "c23", "c24"]
+
+    df.columns = headers
+    df.dropna(subset=["comuna"], axis=0, inplace=True)
+
+    moda_actividad = df["actividad"].mode()[0]
+    df["actividad"].replace(0, moda_actividad, inplace=True)
+
+    moda_actividad_desc = df["actividad_descripcion"].mode()[0]
+    df["actividad_descripcion"].replace("", moda_actividad_desc, inplace=True)
+
+    plot_url1 = grafica1(df)
+    plot_url2 = grafica2(df)
+    plot_url3 = grafica3(df)
+    return render_template('grafica.html', imagen={ 'imagen1': plot_url1, 'imagen2': plot_url2, 'imagen3': plot_url3 })
+
+def grafica1(df):
+        #Lo guarda en la carpeta info
+        #da.save(os.path.join(app.config["data"], filename))
+        #df = pd.read_csv('./info/{}'.format(filename))
+
+    fig, ax = pyplot.subplots(figsize =(17, 20))
+    ax.barh(df['distrito'].unique().tolist(), df["distrito"].value_counts(), align='center')
+    ax.grid(b = True, color ='grey',linestyle ='-.', linewidth = 0.5, alpha = 0.2)
+    for i in ax.patches:
+        plt.pyplot.text(i.get_width()+0.2, i.get_y()+0.25, str(round((i.get_width()), 2)),fontsize = 10, fontweight ='bold',color ='grey')
+        # establece las etiquetas x/y y muestra el título 
+    plt.pyplot.xlabel("Distrito")
+    plt.pyplot.ylabel("Cantidad")
+    plt.pyplot.title("Hurto por Distrito")
+        
+    img = io.BytesIO()
+    plt.pyplot.savefig(img, format='png')
+    img.seek(0)
+    plot_url = base64.b64encode(img.getvalue()).decode()  
+    return  plot_url
+
+def grafica2(df):
+    fig, ax = pyplot.subplots(figsize =(11, 10))
+    ax.barh(df['sucursal'].unique().tolist(), df["sucursal"].value_counts(), align='center')
+    ax.grid(b = True, color ='grey',linestyle ='-.', linewidth = 0.5, alpha = 0.2)
+    for i in ax.patches:
+        plt.pyplot.text(i.get_width()+0.2, i.get_y()+0.25, str(round((i.get_width()), 2)),fontsize = 10, fontweight ='bold',color ='grey')
+    # establece las etiquetas x/y y muestra el título 
+    plt.pyplot.xlabel("Sucursal")
+    plt.pyplot.ylabel("Cantidad")
+    plt.pyplot.title("Hurto por Sucursal")
+    
+    img = io.BytesIO()
+    plt.pyplot.savefig(img, format='png')
+    img.seek(0)
+    plot_url = base64.b64encode(img.getvalue()).decode()  
+    return  plot_url
+
+def grafica3(df):
+    fig, ax = pyplot.subplots(figsize =(11, 5))
+    ax.barh(df['tarifa'].unique().tolist(), df["tarifa"].value_counts(), align='center')
+    ax.grid(b = True, color ='grey',linestyle ='-.', linewidth = 0.5, alpha = 0.2)
+    for i in ax.patches:
+        plt.pyplot.text(i.get_width()+0.2, i.get_y()+0.25, str(round((i.get_width()), 2)),fontsize = 10, fontweight ='bold',color ='grey')
+    # establece las etiquetas x/y y muestra el título 
+    plt.pyplot.xlabel("Distrito")
+    plt.pyplot.ylabel("Cantidad")
+    plt.pyplot.title("Hurto por Tarifa")
+    
+    img = io.BytesIO()
+    plt.pyplot.savefig(img, format='png')
+    img.seek(0)
+    plot_url = base64.b64encode(img.getvalue()).decode()  
+    return  plot_url
+
+@app.route('/prediccion', methods=['POST'])
+def prediccion():
+    if request.method == 'POST':
+        da = request.files['file']
+        filename = secure_filename(da.filename)
+        da.save(os.path.join(filename))
+        files = { 'myfile' : open(filename, 'rb')}
+        r = requests.post(url, files=files)
+        print(r.status_code)
+        print(type(r.text))
+        res = r.text.strip('][').split(', ')
+        return render_template('prediccion.html', predicciones= enumerate(res))
+
+
+if __name__ == "__main__":
+    app.run(port = 80, debug = True)
+

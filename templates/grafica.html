@@ -1,0 +1,34 @@
+{% extends "layout.html" %} {% block content %}
+<div class="card text-center">
+    <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item">
+                <a class="nav-link" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="./grafica">Grafica</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link " href="#">Prediccion</a>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body">
+        <center>
+            <img width="1000" height="1300" src="data:image/png;base64,{{imagen.imagen1}}">
+        </center>
+    </div>
+    <div class="card-body">
+        <center>
+            <img width="1000" height="1200" src="data:image/png;base64,{{imagen.imagen2}}">
+        </center>
+    </div>
+    <div class="card-body">
+        <center>
+            <img width="1000" height="800" src="data:image/png;base64,{{imagen.imagen3}}">
+        </center>
+    </div>
+</div>
+
+
+{% endblock %}
