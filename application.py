@@ -2,7 +2,7 @@ import itertools
 
 from flask import Flask, request, render_template
 from sklearn import preprocessing, model_selection, linear_model
-from sklearn.metrics import precision_score, recall_score, confusion_matrix
+from sklearn.metrics import precision_score, recall_score, confusion_matrix, accuracy_score
 from werkzeug.utils import secure_filename
 import os
 import io
@@ -54,10 +54,19 @@ def modelo():
     model.fit(X_train, Y_train)
 
     predictions = model.predict(X_test)
+
+    prescision = round(precision_score(Y_test, predictions)*100,2)
+    recall = round(recall_score(Y_test, predictions)*100,2)
+    accuracy = round(accuracy_score(Y_test, predictions)*100,2)
+    cantidadMuestra = X_train.shape[0] + X_test.shape[0]
+    cantidadEntrenamiento = X_train.shape[0]
+    cantidadTest = X_test.shape[0]
+
     cnf_matrix = confusion_matrix(Y_test, predictions, labels=[1, 0])
     plt.figure()
     plot_url1 = plot_confusion_matrix(cnf_matrix, classes=['churn=1', 'churn=0'], normalize=False, title='Matriz de confusión')
-    return render_template('prediccion.html', imagen={'imagen1': plot_url1})
+    return render_template('prediccion.html', imagen={'imagen1': plot_url1,'prescision':prescision,'recall':recall,'accuracy':accuracy,'cantidadMuestra':cantidadMuestra
+                                                      ,"cantidadEntrenamiento":cantidadEntrenamiento,"cantidadTest":cantidadTest})
 
 def plot_confusion_matrix(cm, classes,
                           normalize=False,
@@ -79,7 +88,7 @@ def plot_confusion_matrix(cm, classes,
     plt.title(title)
     plt.colorbar()
     tick_marks = np.arange(len(classes))
-    plt.xticks(tick_marks, classes, rotation=45)
+    plt.xticks(tick_marks, classes, rotation=0)
     plt.yticks(tick_marks, classes)
 
     fmt = '.2f' if normalize else 'd'
@@ -90,8 +99,8 @@ def plot_confusion_matrix(cm, classes,
                  color="white" if cm[i, j] > thresh else "black")
 
     plt.tight_layout()
-    plt.ylabel('Etiqueta Real')
-    plt.xlabel('Etiqueta Predicha')
+    plt.ylabel('Real')
+    plt.xlabel('Predicción')
     img = io.BytesIO()
     pyplot.savefig(img, format='png')
     img.seek(0)

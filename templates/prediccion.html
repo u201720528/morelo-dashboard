@@ -13,6 +13,50 @@
             </li>
         </ul>
     </div>
+     <div class="card-body">
+         <div class="row">
+             <div class="col-sm">
+             </div>
+            <div class="col-sm">
+                <p class="font-weight-bold">Cantidad Casos: {{imagen.cantidadMuestra}}</p>
+            </div>
+            <div class="col-sm">
+                <p class="font-weight-bold">Entrenamiento: {{imagen.cantidadEntrenamiento}}</p>
+            </div>
+            <div class="col-sm">
+                <p class="font-weight-bold">Test: {{imagen.cantidadTest}}</p>
+            </div>
+             <div class="col-sm">
+             </div>
+         </div>
+         <div class="row">
+            <div class="col-sm">
+            </div>
+            <div class="col-sm">
+                <p class="font-weight-bold">Precisión: {{imagen.prescision}}%</p>
+            </div>
+            <div class="col-sm">
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-sm">
+            </div>
+            <div class="col-sm">
+                <p class="font-weight-bold">Sensibilidad: {{imagen.recall}}%</p>
+            </div>
+            <div class="col-sm">
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-sm">
+            </div>
+            <div class="col-sm">
+                <p class="font-weight-bold">Exactitud: {{imagen.accuracy}}%</p>
+            </div>
+            <div class="col-sm">
+            </div>
+         </div>
+    </div>
     <div class="card-body">
         <center>
             <img width="600" height="600" src="data:image/png;base64,{{imagen.imagen1}}">
