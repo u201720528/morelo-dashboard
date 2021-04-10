@@ -114,13 +114,10 @@ def grafica():
 
     df.columns = headers
     df.dropna(subset=["comuna"], axis=0, inplace=True)
-
     moda_actividad = df["actividad"].mode()[0]
     df["actividad"].replace(0, moda_actividad, inplace=True)
-
     moda_actividad_desc = df["actividad_descripcion"].mode()[0]
     df["actividad_descripcion"].replace("", moda_actividad_desc, inplace=True)
-
     plot_url1 = grafica1(df)
     plot_url2 = grafica2(df)
     plot_url3 = grafica3(df)
@@ -135,7 +132,6 @@ def grafica1(df):
     pyplot.xlabel("Distrito")
     pyplot.ylabel("Cantidad")
     pyplot.title("Hurto por Distrito")
-        
     img = io.BytesIO()
     pyplot.savefig(img, format='png')
     img.seek(0)
@@ -151,7 +147,6 @@ def grafica2(df):
     pyplot.xlabel("Sucursal")
     pyplot.ylabel("Cantidad")
     pyplot.title("Hurto por Sucursal")
-    
     img = io.BytesIO()
     pyplot.savefig(img, format='png')
     img.seek(0)
@@ -173,20 +168,6 @@ def grafica3(df):
     img.seek(0)
     plot_url = base64.b64encode(img.getvalue()).decode()  
     return  plot_url
-
-@app.route('/prediccion', methods=['POST'])
-def prediccion():
-    if request.method == 'POST':
-        da = request.files['file']
-        filename = secure_filename(da.filename)
-        da.save(os.path.join(filename))
-        files = { 'myfile' : open(filename, 'rb')}
-        r = requests.post(url, files=files)
-        print(r.status_code)
-        print(type(r.text))
-        res = r.text.strip('][').split(', ')
-        return render_template('prediccion.html', predicciones= enumerate(res))
-
 
 #if __name__ == "__main__":
 #    app.run(port = 80, debug = True)
