@@ -9,8 +9,6 @@ import io
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.figure import Figure
 import base64
 from matplotlib import pyplot
 import requests
@@ -110,9 +108,6 @@ def plot_confusion_matrix(cm, classes,
 
 @app.route('/grafica', methods=['GET'])
 def grafica():
-    #if request.method == 'POST':
-    #da = request.files['file']
-    #filename = secure_filename(da.filename)
     df = pd.read_csv("hurtos.csv")
     headers = ["numero_cliente", "fecha_inspeccion", "comuna", "distrito", "actividad", "actividad_descripcion",
                "categoria", "giro_suministro", "tarifa", "clave_tarifa", "latitud", "longitud", "tipo_causal",
@@ -139,10 +134,6 @@ def grafica():
     return render_template('grafica.html', imagen={ 'imagen1': plot_url1, 'imagen2': plot_url2, 'imagen3': plot_url3 })
 
 def grafica1(df):
-        #Lo guarda en la carpeta info
-        #da.save(os.path.join(app.config["data"], filename))
-        #df = pd.read_csv('./info/{}'.format(filename))
-
     fig, ax = pyplot.subplots(figsize =(17, 20))
     ax.barh(df['distrito'].unique().tolist(), df["distrito"].value_counts(), align='center')
     ax.grid(b = True, color ='grey',linestyle ='-.', linewidth = 0.5, alpha = 0.2)
