@@ -8,15 +8,12 @@ import os
 import io
 import pandas as pd
 import matplotlib.pyplot as plt
-
 import base64
 from matplotlib import pyplot
 import requests
 import numpy as np
 
 app = Flask(__name__)
-url = 'https://lds-api.azurewebsites.net/home/logisticRegression'
-
 
 @app.route('/')
 def main():
@@ -30,7 +27,7 @@ def modelo():
 
     X = np.array(ModelData.drop(['clasificacion'], 1))
     y = np.array(ModelData['clasificacion'])
-    f = X.shape
+    #f = X.shape
     # print(f)
 
     X = preprocessing.StandardScaler().fit(X).transform(X)
@@ -70,10 +67,6 @@ def plot_confusion_matrix(cm, classes,
                           normalize=False,
                           title='Confusion matrix',
                           cmap=plt.cm.Blues):
-    """
-    Esta función muestra y dibuja la matriz de confusión.
-    La normalización se puede aplicar estableciendo el valor `normalize=True`.
-    """
     if normalize:
         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
         print("Matriz de confusión normalizada")
@@ -139,7 +132,6 @@ def grafica1(df):
     ax.grid(b = True, color ='grey',linestyle ='-.', linewidth = 0.5, alpha = 0.2)
     for i in ax.patches:
         pyplot.text(i.get_width()+0.2, i.get_y()+0.25, str(round((i.get_width()), 2)),fontsize = 10, fontweight ='bold',color ='grey')
-        # establece las etiquetas x/y y muestra el título 
     pyplot.xlabel("Distrito")
     pyplot.ylabel("Cantidad")
     pyplot.title("Hurto por Distrito")
@@ -156,7 +148,6 @@ def grafica2(df):
     ax.grid(b = True, color ='grey',linestyle ='-.', linewidth = 0.5, alpha = 0.2)
     for i in ax.patches:
         pyplot.text(i.get_width()+0.2, i.get_y()+0.25, str(round((i.get_width()), 2)),fontsize = 10, fontweight ='bold',color ='grey')
-    # establece las etiquetas x/y y muestra el título 
     pyplot.xlabel("Sucursal")
     pyplot.ylabel("Cantidad")
     pyplot.title("Hurto por Sucursal")
@@ -173,7 +164,6 @@ def grafica3(df):
     ax.grid(b = True, color ='grey',linestyle ='-.', linewidth = 0.5, alpha = 0.2)
     for i in ax.patches:
         pyplot.text(i.get_width()+0.2, i.get_y()+0.25, str(round((i.get_width()), 2)),fontsize = 10, fontweight ='bold',color ='grey')
-    # establece las etiquetas x/y y muestra el título 
     pyplot.xlabel("Distrito")
     pyplot.ylabel("Cantidad")
     pyplot.title("Hurto por Tarifa")
@@ -198,6 +188,6 @@ def prediccion():
         return render_template('prediccion.html', predicciones= enumerate(res))
 
 
-if __name__ == "__main__":
-    app.run(port = 80, debug = True)
+#if __name__ == "__main__":
+#    app.run(port = 80, debug = True)
 
