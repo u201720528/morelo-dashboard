@@ -3,14 +3,11 @@ import itertools
 from flask import Flask, request, render_template
 from sklearn import preprocessing, model_selection, linear_model
 from sklearn.metrics import precision_score, recall_score, confusion_matrix, accuracy_score
-from werkzeug.utils import secure_filename
-import os
 import io
 import pandas as pd
 import matplotlib.pyplot as plt
 import base64
 from matplotlib import pyplot
-import requests
 import numpy as np
 
 app = Flask(__name__)
