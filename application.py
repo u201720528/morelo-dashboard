@@ -13,12 +13,9 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 import base64
 from matplotlib import pyplot
-import requests
 import numpy as np
 
 app = Flask(__name__)
-url = 'https://lds-api.azurewebsites.net/home/logisticRegression'
-
 
 @app.route('/')
 def main():
@@ -127,13 +124,13 @@ def grafica():
     df.columns = headers
     df.dropna(subset=["comuna"], axis=0, inplace=True)
 
-    #moda_actividad_desc = df["actividad_descripcion"].mode()[0]
-    #df["actividad_descripcion"].replace(np.nan, moda_actividad_desc, inplace=True)
+    moda_actividad_desc = df["actividad_descripcion"].mode()[0]
+    df["actividad_descripcion"].replace(np.nan, moda_actividad_desc, inplace=True)
 
     plot_url1 = grafica1(df)
     plot_url2 = grafica2(df)
     plot_url3 = grafica3(df)
-    plot_url4 = grafica4()
+    plot_url4 = grafica4(df)
     return render_template('grafica.html', imagen={ 'imagen1': plot_url1, 'imagen2': plot_url2, 'imagen3': plot_url3 , 'imagen4': plot_url4 })
 
 def grafica1(df):
@@ -192,24 +189,7 @@ def grafica3(df):
     return  plot_url
 
 
-def grafica4():
-    df = pd.read_csv("hurtos.csv")
-    headers = ["numero_cliente", "fecha_inspeccion", "comuna", "distrito", "actividad", "actividad_descripcion",
-               "categoria", "giro_suministro", "tarifa", "clave_tarifa", "latitud", "longitud", "tipo_causal",
-               "inf_disponible", "sucursal", "fecha_inicio", "fecha_fin", "fecha_creacion", "meses", "f1", "f2", "f3",
-               "f4", "f5", "f6", "f7", "f8", "f9", "f10", "f11", "f12", "f13", "f14", "f15", "f16", "f17", "f18", "f19",
-               "f20", "f21", "f22", "f23", "f24"
-        , "d1", "d2", "d3", "d4", "d5", "d6", "d7", "d8", "d9", "d10", "d11", "d12", "d13", "d14", "d15", "d16", "d17",
-               "d18", "d19", "d20", "d21", "d22", "d23", "d24"
-        , "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "c11", "c12", "c13", "c14", "c15", "c16", "c17",
-               "c18", "c19", "c20", "c21", "c22", "c23", "c24"]
-
-    df.columns = headers
-    df.dropna(subset=["comuna"], axis=0, inplace=True)
-
-    moda_actividad_desc = df["actividad_descripcion"].mode()[0]
-    df["actividad_descripcion"].replace(np.nan, moda_actividad_desc, inplace=True)
-
+def grafica4(df):
     fig, ax = pyplot.subplots(figsize=(17, 20))
     ax.barh(df['actividad_descripcion'].unique().tolist(), df["actividad_descripcion"].value_counts(), align='center')
     ax.grid(b=True, color='grey', linestyle='-.', linewidth=0.5, alpha=0.2)
