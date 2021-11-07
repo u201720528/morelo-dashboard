@@ -1,8 +1,15 @@
 import itertools
+import pickle
 
 from flask import Flask, request, render_template
 from sklearn import preprocessing, model_selection, linear_model
 from sklearn.metrics import precision_score, recall_score, confusion_matrix, accuracy_score
+
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.externals import joblib
+
 from werkzeug.utils import secure_filename
 import os
 import io
@@ -20,6 +27,23 @@ app = Flask(__name__)
 @app.route('/')
 def main():
     return render_template('home.html')
+
+@app.route('/prediccion', methods=['GET'])
+def prediccion():
+
+    loaded_model = pickle.load(open('lds_model.sav', 'rb'))
+
+    ModelData = pd.read_csv("MainDataSeptiembre.csv")
+
+    ModelData['clasificacion'] = ModelData['clasificacion'].astype('int')
+
+    X = np.array(ModelData.drop(['clasificacion'], 1))
+    y = np.array(ModelData['clasificacion'])
+
+    predictions = loaded_model.predict(X)
+    #prescision = round(precision_score(y, predictions)*100,2)
+    #print(loaded_model)
+    return render_template('nuevoscasos.html')
 
 @app.route('/modelo', methods=['GET'])
 def modelo():
@@ -58,6 +82,8 @@ def modelo():
     cantidadMuestra = X_train.shape[0] + X_test.shape[0]
     cantidadEntrenamiento = X_train.shape[0]
     cantidadTest = X_test.shape[0]
+
+    pickle.dump(model, open("lds_model.sav", "wb"))
 
     cnf_matrix = confusion_matrix(Y_test, predictions, labels=[1, 0])
     plt.figure()
@@ -206,6 +232,7 @@ def grafica4(df):
     img.seek(0)
     plot_url = base64.b64encode(img.getvalue()).decode()
     return plot_url
+
 
 if __name__ == "__main__":
     app.run(port = 80, debug = True)
