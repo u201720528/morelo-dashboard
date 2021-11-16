@@ -28,22 +28,22 @@ app = Flask(__name__)
 def main():
     return render_template('home.html')
 
-@app.route('/prediccion', methods=['GET'])
-def prediccion():
+#@app.route('/prediccion', methods=['GET'])
+#def prediccion():
 
-    loaded_model = pickle.load(open('lds_model.sav', 'rb'))
+    #loaded_model = pickle.load(open('lds_model.sav', 'rb'))
 
-    ModelData = pd.read_csv("MainDataSeptiembre.csv")
+    #ModelData = pd.read_csv("MainDataSeptiembre.csv")
 
-    ModelData['clasificacion'] = ModelData['clasificacion'].astype('int')
+    #ModelData['clasificacion'] = ModelData['clasificacion'].astype('int')
 
-    X = np.array(ModelData.drop(['clasificacion'], 1))
-    y = np.array(ModelData['clasificacion'])
+    #X = np.array(ModelData.drop(['clasificacion'], 1))
+#    y = np.array(ModelData['clasificacion'])
 
-    predictions = loaded_model.predict(X)
+   # predictions = loaded_model.predict(X)
     #prescision = round(precision_score(y, predictions)*100,2)
     #print(loaded_model)
-    return render_template('nuevoscasos.html')
+   # return render_template('nuevoscasos.html')
 
 @app.route('/modelo', methods=['GET'])
 def modelo():
