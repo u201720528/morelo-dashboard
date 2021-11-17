@@ -24,26 +24,16 @@ import numpy as np
 
 app = Flask(__name__)
 
+
 @app.route('/')
 def main():
     return render_template('home.html')
 
-#@app.route('/prediccion', methods=['GET'])
-#def prediccion():
 
-    #loaded_model = pickle.load(open('lds_model.sav', 'rb'))
+@app.route('/prediccion', methods=['GET'])
+def prediccion():
+    return render_template('nuevoscasos.html')
 
-    #ModelData = pd.read_csv("MainDataSeptiembre.csv")
-
-    #ModelData['clasificacion'] = ModelData['clasificacion'].astype('int')
-
-    #X = np.array(ModelData.drop(['clasificacion'], 1))
-#    y = np.array(ModelData['clasificacion'])
-
-   # predictions = loaded_model.predict(X)
-    #prescision = round(precision_score(y, predictions)*100,2)
-    #print(loaded_model)
-   # return render_template('nuevoscasos.html')
 
 @app.route('/modelo', methods=['GET'])
 def modelo():
@@ -76,9 +66,9 @@ def modelo():
 
     predictions = model.predict(X_test)
 
-    prescision = round(precision_score(Y_test, predictions)*100,2)
-    recall = round(recall_score(Y_test, predictions)*100,2)
-    accuracy = round(accuracy_score(Y_test, predictions)*100,2)
+    prescision = round(precision_score(Y_test, predictions) * 100, 2)
+    recall = round(recall_score(Y_test, predictions) * 100, 2)
+    accuracy = round(accuracy_score(Y_test, predictions) * 100, 2)
     cantidadMuestra = X_train.shape[0] + X_test.shape[0]
     cantidadEntrenamiento = X_train.shape[0]
     cantidadTest = X_test.shape[0]
@@ -87,9 +77,12 @@ def modelo():
 
     cnf_matrix = confusion_matrix(Y_test, predictions, labels=[1, 0])
     plt.figure()
-    plot_url1 = plot_confusion_matrix(cnf_matrix, classes=['churn=1', 'churn=0'], normalize=False, title='Matriz de confusión')
-    return render_template('prediccion.html', imagen={'imagen1': plot_url1,'prescision':prescision,'recall':recall,'accuracy':accuracy,'cantidadMuestra':cantidadMuestra
-                                                      ,"cantidadEntrenamiento":cantidadEntrenamiento,"cantidadTest":cantidadTest})
+    plot_url1 = plot_confusion_matrix(cnf_matrix, classes=['churn=1', 'churn=0'], normalize=False,
+                                      title='Matriz de confusión')
+    return render_template('prediccion.html', imagen={'imagen1': plot_url1, 'prescision': prescision, 'recall': recall,
+                                                      'accuracy': accuracy, 'cantidadMuestra': cantidadMuestra
+        , "cantidadEntrenamiento": cantidadEntrenamiento, "cantidadTest": cantidadTest})
+
 
 def plot_confusion_matrix(cm, classes,
                           normalize=False,
@@ -133,9 +126,9 @@ def plot_confusion_matrix(cm, classes,
 
 @app.route('/grafica', methods=['GET'])
 def grafica():
-    #if request.method == 'POST':
-    #da = request.files['file']
-    #filename = secure_filename(da.filename)
+    # if request.method == 'POST':
+    # da = request.files['file']
+    # filename = secure_filename(da.filename)
     df = pd.read_csv("hurtos.csv")
     headers = ["numero_cliente", "fecha_inspeccion", "comuna", "distrito", "actividad", "actividad_descripcion",
                "categoria", "giro_suministro", "tarifa", "clave_tarifa", "latitud", "longitud", "tipo_causal",
@@ -157,62 +150,69 @@ def grafica():
     plot_url2 = grafica2(df)
     plot_url3 = grafica3(df)
     plot_url4 = grafica4(df)
-    return render_template('grafica.html', imagen={ 'imagen1': plot_url1, 'imagen2': plot_url2, 'imagen3': plot_url3 , 'imagen4': plot_url4 })
+    return render_template('grafica.html', imagen={'imagen1': plot_url1, 'imagen2': plot_url2, 'imagen3': plot_url3,
+                                                   'imagen4': plot_url4})
+
 
 def grafica1(df):
-        #Lo guarda en la carpeta info
-        #da.save(os.path.join(app.config["data"], filename))
-        #df = pd.read_csv('./info/{}'.format(filename))
+    # Lo guarda en la carpeta info
+    # da.save(os.path.join(app.config["data"], filename))
+    # df = pd.read_csv('./info/{}'.format(filename))
 
-    fig, ax = pyplot.subplots(figsize =(17, 20))
+    fig, ax = pyplot.subplots(figsize=(17, 20))
     ax.barh(df['distrito'].unique().tolist(), df["distrito"].value_counts(), align='center')
-    ax.grid(b = True, color ='grey',linestyle ='-.', linewidth = 0.5, alpha = 0.2)
+    ax.grid(b=True, color='grey', linestyle='-.', linewidth=0.5, alpha=0.2)
     for i in ax.patches:
-        pyplot.text(i.get_width()+0.2, i.get_y()+0.25, str(round((i.get_width()), 2)),fontsize = 10, fontweight ='bold',color ='grey')
+        pyplot.text(i.get_width() + 0.2, i.get_y() + 0.25, str(round((i.get_width()), 2)), fontsize=10,
+                    fontweight='bold', color='grey')
         # establece las etiquetas x/y y muestra el título 
     pyplot.xlabel("Distrito")
     pyplot.ylabel("Cantidad")
     pyplot.title("Hurto por Distrito")
-        
+
     img = io.BytesIO()
     pyplot.savefig(img, format='png')
     img.seek(0)
-    plot_url = base64.b64encode(img.getvalue()).decode()  
-    return  plot_url
+    plot_url = base64.b64encode(img.getvalue()).decode()
+    return plot_url
+
 
 def grafica2(df):
-    fig, ax = pyplot.subplots(figsize =(11, 10))
+    fig, ax = pyplot.subplots(figsize=(11, 10))
     ax.barh(df['sucursal'].unique().tolist(), df["sucursal"].value_counts(), align='center')
-    ax.grid(b = True, color ='grey',linestyle ='-.', linewidth = 0.5, alpha = 0.2)
+    ax.grid(b=True, color='grey', linestyle='-.', linewidth=0.5, alpha=0.2)
     for i in ax.patches:
-        pyplot.text(i.get_width()+0.2, i.get_y()+0.25, str(round((i.get_width()), 2)),fontsize = 10, fontweight ='bold',color ='grey')
+        pyplot.text(i.get_width() + 0.2, i.get_y() + 0.25, str(round((i.get_width()), 2)), fontsize=10,
+                    fontweight='bold', color='grey')
     # establece las etiquetas x/y y muestra el título 
     pyplot.xlabel("Sucursal")
     pyplot.ylabel("Cantidad")
     pyplot.title("Hurto por Sucursal")
-    
+
     img = io.BytesIO()
     pyplot.savefig(img, format='png')
     img.seek(0)
-    plot_url = base64.b64encode(img.getvalue()).decode()  
-    return  plot_url
+    plot_url = base64.b64encode(img.getvalue()).decode()
+    return plot_url
+
 
 def grafica3(df):
-    fig, ax = pyplot.subplots(figsize =(11, 5))
+    fig, ax = pyplot.subplots(figsize=(11, 5))
     ax.barh(df['tarifa'].unique().tolist(), df["tarifa"].value_counts(), align='center')
-    ax.grid(b = True, color ='grey',linestyle ='-.', linewidth = 0.5, alpha = 0.2)
+    ax.grid(b=True, color='grey', linestyle='-.', linewidth=0.5, alpha=0.2)
     for i in ax.patches:
-        pyplot.text(i.get_width()+0.2, i.get_y()+0.25, str(round((i.get_width()), 2)),fontsize = 10, fontweight ='bold',color ='grey')
+        pyplot.text(i.get_width() + 0.2, i.get_y() + 0.25, str(round((i.get_width()), 2)), fontsize=10,
+                    fontweight='bold', color='grey')
     # establece las etiquetas x/y y muestra el título 
     pyplot.xlabel("Distrito")
     pyplot.ylabel("Cantidad")
     pyplot.title("Hurto por Tarifa")
-    
+
     img = io.BytesIO()
     pyplot.savefig(img, format='png')
     img.seek(0)
-    plot_url = base64.b64encode(img.getvalue()).decode()  
-    return  plot_url
+    plot_url = base64.b64encode(img.getvalue()).decode()
+    return plot_url
 
 
 def grafica4(df):
@@ -235,5 +235,4 @@ def grafica4(df):
 
 
 if __name__ == "__main__":
-    app.run(port = 80, debug = True)
-
+    app.run(port=80, debug=True)
