@@ -11,11 +11,25 @@
             <li class="nav-item">
                 <a class="nav-link " href="./modelo">Modelo</a>
             </li>
-            <!--<li class="nav-item">
+            <li class="nav-item">
                 <a class="nav-link" href="./prediccion">Prediccion</a>
-            </li>-->
+            </li>
         </ul>
     </div>
+
+
+
+    <form method="post" enctype="multipart/form-data" action="/archivo">
+     <div>
+       <label for="file">Seleccionar el archivo para prediccion:</label>
+       <input type="file"
+           id="file" name="file"
+           accept="*">
+     </div>
+     <div>
+       <button>Submit</button>
+     </div>
+    </form>
 </div>
 
 
